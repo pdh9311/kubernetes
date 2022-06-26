@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-
-
 ## Docker install
 CHECK_DOCKER=$(docker version | grep "Docker Engine - Community" | wc -l)
 if [ $CHECK_DOCKER -eq 0 ]; then
