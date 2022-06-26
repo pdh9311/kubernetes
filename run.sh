@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ## Docker install
-CHECK_DOCKER=$(docker version | grep "Docker Engine - Community" | wc -l)
-if [ $CHECK_DOCKER -eq 0 ]; then
+# CHECK_DOCKER=$(docker version | grep "Docker Engine - Community" | wc -l)
+if [ ! -f "/var/run/docker.sock" ]; then
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh get-docker.sh
     chmod 777 /var/run/docker.sock
