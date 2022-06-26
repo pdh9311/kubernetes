@@ -5,13 +5,12 @@ CYAN="\033[96m"
 NC="\033[0m"
 
 ## Docker install
-if [ ! -f "/var/run/docker.sock" ]; then
+if [ ! -e "/var/run/docker.sock" ]; then
     echo -e "$CYAN Docker install $NC"
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh get-docker.sh
     chmod 777 /var/run/docker.sock
     rm -rf get-docker.sh
-    chmod 777 /var/run/docker.sock
 fi
 
 ## Kubernetes install
@@ -39,11 +38,11 @@ fi
 HOSTNAME=$(hostname)
 CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
 IP_RANGE=$(echo `expr "$CURRENT_IP" : '\([0-9]*\.[0-9]*.[0-9]*.\)'`)
-if [ $HOSTNAME == "k8s-master" ]; then
+if [ $HOSTNAME == "master" ]; then
     IP_LAST_BIT="56"
-elif [ $HOSTNAME == "k8s-node1" ]; then
+elif [ $HOSTNAME == "node1" ]; then
     IP_LAST_BIT="57"
-elif [ $HOSTNAME == "k8s-node2" ]; then
+elif [ $HOSTNAME == "node2" ]; then
     IP_LAST_BIT="60"
 else
     echo -e "\033[96m./run [last_ip_bit]\033[0m"
