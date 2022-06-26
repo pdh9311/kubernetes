@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # static ip setting
-echo -e "\033[96m./static_ip.sh [ip_last_bit]\033[0m"
+# echo -e "\033[96m./static_ip.sh [ip_last_bit]\033[0m"
 
 if [ $# -ne 0 ]; then
 CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
