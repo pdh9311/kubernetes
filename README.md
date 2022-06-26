@@ -9,6 +9,4 @@
 	git config --global user.name "pdh9311" \
 	git config --global user.email "padohy@gmail.com" 
 4. ./run.sh [ip_last_bit] 스크립트 실행
-	-> ./docker.sh
-	-> ./static_ip.sh ( ./static_ip.sh [ip_last_bit] )
 7. ssh로 접속해서 사용.
