@@ -8,6 +8,7 @@
 	git clone https://github.com/pdh9311/kubernetes.git \
 	git config --global user.name "pdh9311" \
 	git config --global user.email "padohy@gmail.com" 
-4. ./docker.sh 스크립트 실행
-5. ./static_ip.sh 스크립트 실행 ( ./static_ip.sh [ip_last_bit] )
+4. ./run [ip_last_bit] 스크립트 실행
+	-> ./docker.sh
+	-> ./static_ip.sh ( ./static_ip.sh [ip_last_bit] )
 7. ssh로 접속해서 사용.
