@@ -57,13 +57,13 @@ echo -e "$CYAN Static IP Setting $NC"
 echo "network:
   ethernets:
     enp0s3:
-    dhcp4: false
-    addresses: [$IP]
-    routes:
-      - to: default
-        via: $GATEWAY
-    nameservers:
-      addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
+      dhcp4: false
+      addresses: [$IP]
+      routes:
+        - to: default
+          via: $GATEWAY
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
   version: 2" \
   > /etc/netplan/00-installer-config.yaml
 
