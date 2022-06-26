@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# echo -e "\033[96m./run [last_ip_bit]\033[0m"
+
 
 ## Docker install
 CHECK_DOCKER=$(docker version | grep "Docker Engine - Community" | wc -l)
@@ -43,6 +43,7 @@ elif [ $HOSTNAME == "k8s-node1" ]; then
 elif [ $HOSTNAME == "k8s-node2" ]; then
     IP_LAST_BIT="60"
 else
+    echo -e "\033[96m./run [last_ip_bit]\033[0m"
     IP_LAST_BIT=$1
 fi
 SUBNETMASK="/24"
