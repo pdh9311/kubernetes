@@ -5,7 +5,7 @@ echo -e "\033[96m./run [last_ip_bit]\033[0m"
 
 ## Docker install
 DOCKER=$(docker version | grep "Docker Engine - Community" | wc -l)
-if [ $DOCKER -ne 0 ]; then
+if [ $DOCKER -eq 0 ]; then
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh get-docker.sh
     chmod 777 /var/run/docker.sock
