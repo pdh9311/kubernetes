@@ -16,7 +16,7 @@ fi
 ## Kubernetes install
 # Swap disabled
 SWAP=$(free -h | grep "Swap" | awk '{print $2}')
-if [ $SWAP -ne "0B" ]; then
+if [ $SWAP != "0B" ]; then
 	swapoff -a && sed -i '/swap/s/^/#/' /etc/fstab
 fi
 
