@@ -61,7 +61,7 @@ echo "network:
     addresses: [$IP]
     routes:
       - to: default
-      via: $GATEWAY
+        via: $GATEWAY
     nameservers:
       addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
   version: 2" \
