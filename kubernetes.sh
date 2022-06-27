@@ -25,16 +25,25 @@ sysctl --system
 CHECK_KUBE=$(dpkg -l | grep kubectl | wc -l)
 if [ $CHECK_KUBE -eq 0 ]; then
     echo -e "$CYAN (kubeadm, kubelet, kubectl) install $NC"
-    apt update
-    apt upgrade -y
-    apt install -y apt-transport-https ca-certificates curl
+    apt-get update
+    apt-get upgrade -y
+    apt-get install -y apt-transport-https ca-certificates curl
     curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
     echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-    apt update
-    apt install -y kubelet kubeadm kubectl
+    apt-get update
+    apt-get install -y kubelet kubeadm kubectl
     apt-mark hold kubelet kubeadm kubectl
 fi
 
 if [ $HOSTNAME == "k8s-master" ]; then
-kubeadm init
+sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
+service containerd restart
+kubeadm init | tail -e > token
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+
+# weave
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 fi
