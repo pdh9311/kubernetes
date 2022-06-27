@@ -32,7 +32,7 @@ network:
       dhcp4: false
       addresses: [192.168.56.$IP_LAST_BIT$SUBNETMASK]
       routes:
-        - to: defalut
+        - to: default
           via: 192.168.56.1
   version: 2
 EOF
