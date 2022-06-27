@@ -1,15 +1,18 @@
-master:
+run :
+	./run.sh
+
+master :
 	ssh root@192.168.56.56
-node1:
+node1 :
 	ssh root@192.168.56.57
-node2:
+node2 :
 	ssh root@192.168.56.58
 
-loop:
+loop :
 	./make/check_join.sh
-nodes:
+nodes :
 	kubectl get nodes
-wide:
+wide :
 	kubectl get nodes -o wide
-all:
+all :
 	kubectl get pod --all-namespaces
