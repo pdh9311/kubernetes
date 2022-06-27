@@ -37,11 +37,11 @@ if [ $CHECK_KUBE -eq 0 ]; then
     apt-get update
     apt-get install -y kubelet kubeadm kubectl
     apt-mark hold kubelet kubeadm kubectl
+    sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
+    service containerd restart
 fi
 
 if [ $HOSTNAME == "k8s-master" ]; then
-sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
-service containerd restart
 echo -e "$MAGENTA kubeadm init ... $NC"
 kubeadm init | tail -2 > $HOME/token
 
