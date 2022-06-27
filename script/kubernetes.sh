@@ -39,6 +39,12 @@ if [ $CHECK_KUBE -eq 0 ]; then
     apt-mark hold kubelet kubeadm kubectl
     sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
     service containerd restart
+
+    ## bash auto-completion on Linux
+    echo 'source <(kubectl completion bash)' >> ~/.bashrc
+    echo 'alias k=kubectl' >> ~/.bashrc
+    echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc
+    source ~/.bashrc
 fi
 
 if [ $HOSTNAME == "k8s-master" ]; then
@@ -48,7 +54,8 @@ kubeadm init | tail -2 > $HOME/token
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
-KUBECONFIG=/etc/kubernetes/admin.conf
+echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> ~/bashrc
+source ~/.bashrc
 
 echo -e "$MAGENTA weave $NC"
 # weave
