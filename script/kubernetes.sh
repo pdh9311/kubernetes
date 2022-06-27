@@ -48,8 +48,7 @@ kubeadm init | tail -2 > $HOME/token
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
-echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' > $HOME/.bashrc
-source $HOME/.bashrc
+KUBECONFIG=/etc/kubernetes/admin.conf
 
 echo -e "$MAGENTA weave $NC"
 # weave
