@@ -4,6 +4,42 @@
 CYAN="\033[96m"
 NC="\033[0m"
 
+## Static IP Setting
+HOSTNAME=$(hostname)
+CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
+IP_RANGE=$(echo `expr "$CURRENT_IP" : '\([0-9]*\.[0-9]*.[0-9]*.\)'`)
+if [ $HOSTNAME == "k8s-master" ]; then
+    IP_LAST_BIT="56"
+elif [ $HOSTNAME == "k8s-node1" ]; then
+    IP_LAST_BIT="57"
+elif [ $HOSTNAME == "k8s-node2" ]; then
+    IP_LAST_BIT="60"
+else
+    echo -e "\033[96m./run [last_ip_bit]\033[0m"
+    IP_LAST_BIT=$1
+fi
+SUBNETMASK="/24"
+IP=$IP_RANGE$IP_LAST_BIT$SUBNETMASK
+GATEWAY=$IP_RANGE"1"
+CHECK_STATIC_IP=$(cat /etc/netplan/00-installer-config.yaml | grep "addresses:" | wc -l)
+if [ $CHECK_STATIC_IP -eq 0 ]; then
+echo -e "$CYAN Static IP Setting $NC"
+echo "network:
+  ethernets:
+    enp0s3:
+      dhcp4: false
+      addresses: [$IP]
+      routes:
+        - to: default
+          via: $GATEWAY
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
+  version: 2" \
+  > /etc/netplan/00-installer-config.yaml
+
+netplan apply
+fi
+
 ## Docker install
 if [ ! -e "/var/run/docker.sock" ]; then
     echo -e "$CYAN Docker install $NC"
@@ -74,55 +110,26 @@ apt install -y cri-o cri-o-runc
 systemctl daemon-reload
 systemctl enable crio --now
 
-# sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
-# conmon_cgroup = "pod"
-# cgroup_manager = "cgroupfs"
-fi
-# (kubeadm, kubelet, kubectl) install
-CHECK_KUBE=$(dpkg -l | grep kubectl | wc -l)
-if [ $CHECK_KUBE -eq 0 ]; then
-    echo -e "$CYAN (kubeadm, kubelet, kubectl) install $NC"
-    apt update
-    apt install -y apt-transport-https ca-certificates curl
-    curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-    apt update
-    apt install -y kubelet kubeadm kubectl
-    apt-mark hold kubelet kubeadm kubectl
-fi
+sed -i 's/conmon_cgroup = .*/conmon_cgroup = "pod"/g' /etc/crio/crio.conf
+sed -i 's/cgroup_manager = .*/cgroup_manager = "cgroupfs"/g' /etc/crio/crio.conf
 
-## Static IP Setting
-HOSTNAME=$(hostname)
-CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
-IP_RANGE=$(echo `expr "$CURRENT_IP" : '\([0-9]*\.[0-9]*.[0-9]*.\)'`)
-if [ $HOSTNAME == "k8s-master" ]; then
-    IP_LAST_BIT="56"
-elif [ $HOSTNAME == "k8s-node1" ]; then
-    IP_LAST_BIT="57"
-elif [ $HOSTNAME == "k8s-node2" ]; then
-    IP_LAST_BIT="60"
-else
-    echo -e "\033[96m./run [last_ip_bit]\033[0m"
-    IP_LAST_BIT=$1
-fi
-SUBNETMASK="/24"
-IP=$IP_RANGE$IP_LAST_BIT$SUBNETMASK
-GATEWAY=$IP_RANGE"1"
-CHECK_STATIC_IP=$(cat /etc/netplan/00-installer-config.yaml | grep "addresses:" | wc -l)
-if [ $CHECK_STATIC_IP -eq 0 ]; then
-echo -e "$CYAN Static IP Setting $NC"
-echo "network:
-  ethernets:
-    enp0s3:
-      dhcp4: false
-      addresses: [$IP]
-      routes:
-        - to: default
-          via: $GATEWAY
-      nameservers:
-        addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
-  version: 2" \
-  > /etc/netplan/00-installer-config.yaml
 
-    netplan apply
+
+    # (kubeadm, kubelet, kubectl) install
+    CHECK_KUBE=$(dpkg -l | grep kubectl | wc -l)
+    if [ $CHECK_KUBE -eq 0 ]; then
+        echo -e "$CYAN (kubeadm, kubelet, kubectl) install $NC"
+        apt update
+        apt install -y apt-transport-https ca-certificates curl
+        curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+        apt update
+        apt install -y kubelet kubeadm kubectl
+        apt-mark hold kubelet kubeadm kubectl
+    fi
+
+    if [ $HOSTNAME == "k8s-master" ]; then
+    kubeadm init --cri-socket unix:///var/run/crio/crio.sock --image-repository registry.aliyuncs.com/google_containers
+    fi
+
 fi
