@@ -8,14 +8,17 @@ if [ $CHECK_SWAP != "0B" ]; then
 fi
 
 # iptables가 브리지된 트래픽을 보게 하기
+if [ ! -e /etc/modules-load.d/k8s.conf ]; then
 cat <<EOF | tee /etc/modules-load.d/k8s.conf
 br_netfilter
 EOF
-
+fi
+if [ ! -e /etc/sysctl.d/k8s.conf ]; then
 cat <<EOF | tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
+fi
 sysctl --system
 
  # (kubeadm, kubelet, kubectl) install
