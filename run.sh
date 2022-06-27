@@ -1,7 +1,5 @@
 #!/bin/bash
 
-apt-get install -y make
-
 # Color
 CYAN="\033[96m"
 NC="\033[0m"
