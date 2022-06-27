@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Color
+CYAN="\033[96m"
+NC="\033[0m"
+
 # Static IP Setting
 HOSTNAME=$(hostname)
 CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
@@ -15,7 +19,6 @@ else
 fi
 
 if [ $IP_LAST_BIT != "error" ]; then
-
 SUBNETMASK="/24"
 IP=$IP_RANGE$IP_LAST_BIT$SUBNETMASK
 GATEWAY=$IP_RANGE"1"
@@ -37,5 +40,6 @@ network:
 EOF
 netplan apply
 fi
-
+STATIC_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
+echo -e "$CYAN $STATIC_IP $NC"
 fi
