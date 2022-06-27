@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# Color
+MAGENTA="\033[95m"
+NC="\033[0m"
+
 # Swap disabled
 CHECK_SWAP=$(free -h | grep "Swap" | awk '{print $2}')
 if [ $CHECK_SWAP != "0B" ]; then
-    echo -e "$CYAN Swap disabled $NC"
+    echo -e "$MAGENTA Swap disabled $NC"
     swapoff -a && sed -i '/swap/s/^/#/' /etc/fstab
 fi
 
@@ -24,7 +28,7 @@ sysctl --system
  # (kubeadm, kubelet, kubectl) install
 CHECK_KUBE=$(dpkg -l | grep kubectl | wc -l)
 if [ $CHECK_KUBE -eq 0 ]; then
-    echo -e "$CYAN (kubeadm, kubelet, kubectl) install $NC"
+    echo -e "$MAGENTA (kubeadm, kubelet, kubectl) install $NC"
     apt-get update
     apt-get upgrade -y
     apt-get install -y apt-transport-https ca-certificates curl

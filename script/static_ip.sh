@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Color
-CYAN="\033[96m"
+MAGENTA="\033[95m"
 NC="\033[0m"
 
 # Static IP Setting
@@ -24,7 +24,7 @@ IP=$IP_RANGE$IP_LAST_BIT$SUBNETMASK
 GATEWAY=$IP_RANGE"1"
 CHECK_STATIC_IP=$(cat /etc/netplan/00-installer-config.yaml | grep "addresses:" | wc -l)
 if [ $CHECK_STATIC_IP -eq 0 ]; then
-echo -e "$CYAN Static IP Setting $NC"
+echo -e "$MAGENTA Static IP Setting $NC"
 cat << EOF >> /etc/netplan/00-installer-config.yaml
 network:
   ethernets:
@@ -41,5 +41,5 @@ EOF
 netplan apply
 fi
 STATIC_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
-echo -e "$CYAN $STATIC_IP $NC"
+echo -e "$MAGENTA $STATIC_IP $NC"
 fi

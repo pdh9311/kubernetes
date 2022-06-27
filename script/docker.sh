@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Color
+MAGENTA="\033[95m"
+NC="\033[0m"
+
+if [ ! -e /var/run/docker.sock ]; then
 apt-get install -y \
     ca-certificates \
     curl \
@@ -16,3 +21,4 @@ echo \
 apt-get update
 apt-get upgrade -y
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+fi
