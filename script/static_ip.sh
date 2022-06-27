@@ -25,7 +25,7 @@ GATEWAY=$IP_RANGE"1"
 CHECK_STATIC_IP=$(cat /etc/netplan/00-installer-config.yaml | grep "addresses:" | wc -l)
 if [ $CHECK_STATIC_IP -eq 0 ]; then
 echo -e "$MAGENTA Static IP Setting $NC"
-cat << EOF >> /etc/netplan/00-installer-config.yaml
+cat << EOF > /etc/netplan/00-installer-config.yaml
 network:
   ethernets:
     enp0s3:
