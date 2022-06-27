@@ -38,7 +38,7 @@ fi
 if [ $HOSTNAME == "k8s-master" ]; then
 sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
 service containerd restart
-kubeadm init | tail -e > token
+kubeadm init | tail -2 > token
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
