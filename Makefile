@@ -11,6 +11,8 @@ node2 :
 loop :
 	bash ./make/check_join.sh
 
+token :
+	cat ~/token
 nodes :
 	kubectl get nodes
 wide :

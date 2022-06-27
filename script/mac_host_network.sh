@@ -46,6 +46,4 @@ network:
 EOF
 netplan apply
 fi
-STATIC_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
-echo -e "$MAGENTA $STATIC_IP $NC"
 fi
