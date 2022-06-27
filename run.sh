@@ -16,8 +16,8 @@ echo -e "$CYAN [ 4. hosts ] $NC"
 ./script/hosts.sh
 
 echo -e "$CYAN [ 3. static ip ] $NC"
-./script/static_ip.sh
-# ./script/mac_host_network.sh
+#./script/static_ip.sh
+./script/mac_host_network.sh
 
 echo -e "$CYAN [ 4. docker ] $NC"
 ./script/docker.sh

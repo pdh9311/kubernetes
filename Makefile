@@ -9,7 +9,8 @@ node2 :
 	ssh root@192.168.56.58
 
 loop :
-	./make/check_join.sh
+	bash ./make/check_join.sh
+
 nodes :
 	kubectl get nodes
 wide :
