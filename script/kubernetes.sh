@@ -42,12 +42,15 @@ fi
 if [ $HOSTNAME == "k8s-master" ]; then
 sed -i '/.*disabled_plugins.*/s/^/#/g' /etc/containerd/config.toml
 service containerd restart
+echo -e "$MAGENTA kubeadm init ... $NC"
 kubeadm init | tail -2 > token
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 KUBECONFIG=/etc/kubernetes/admin.conf
+
+echo -e "$MAGENTA weave $NC"
 # weave
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 fi
