@@ -5,19 +5,19 @@ CYAN="\033[96m"
 NC="\033[0m"
 
 echo -e "$CYAN [ 1. ssh password ] $NC"
-./ssh_password
+./script/ssh_password
 
 echo -e "$CYAN [ 2. firewall ] $NC"
-./firewall.sh
+./script/firewall.sh
 
 echo -e "$CYAN [ 4. hosts ] $NC"
-./hosts.sh
+./script/hosts.sh
 
 echo -e "$CYAN [ 3. static ip ] $NC"
-./static_ip.sh
+./script/static_ip.sh
 
 echo -e "$CYAN [ 4. docker ] $NC"
-./docker.sh
+./script/docker.sh
 
 echo -e "$CYAN [ 5. kubernetes ] $NC"
-./kubernetes.sh
+./script/kubernetes.sh
