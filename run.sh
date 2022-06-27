@@ -5,7 +5,7 @@ CYAN="\033[96m"
 NC="\033[0m"
 
 echo -e "$CYAN [ 1. ssh password ] $NC"
-./script/ssh_password
+./script/ssh_password.sh
 
 echo -e "$CYAN [ 2. firewall ] $NC"
 ./script/firewall.sh
