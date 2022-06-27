@@ -6,11 +6,10 @@ node2:
 	ssh root@192.168.56.58
 
 loop:
-	for((;;)) do clear; kubectl get pod --all-namespaces; echo ""; kubectl get nodes; done
-
-get-nodes:
+	./make/check_join.sh
+nodes:
 	kubectl get nodes
-get-nodes1:
+wide:
 	kubectl get nodes -o wide
-pod-all:
+all:
 	kubectl get pod --all-namespaces
