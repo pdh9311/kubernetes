@@ -17,7 +17,7 @@ if [ $IP_LAST_BIT != "error" ]; then
 SUBNETMASK="/24"
 IP=$IP_RANGE$IP_LAST_BIT$SUBNETMASK
 GATEWAY=$IP_RANGE"1"
-cat << EOF >> /etc/netplan/00-installer-config.yaml
+cat << EOF > /etc/netplan/00-installer-config.yaml
 network:
   ethernets:
     enp0s3:
@@ -30,9 +30,11 @@ network:
         addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
     enp0s8:
       dhcp4: false
-      addresses: 192.168.56.$IP_LAST_BIT
+      addresses: [192.168.56.$IP_LAST_BIT$SUBNETMASK]
       routes:
-        - to: deafult
+        - to: defalut
           via: 192.168.56.1
-  version: 2"
+  version: 2
 EOF
+netplan apply
+fi

@@ -36,7 +36,7 @@ network:
           via: $GATEWAY
       nameservers:
         addresses: [8.8.8.8, 8.8.4.4, $GATEWAY]
-  version: 2"
+  version: 2
 EOF
 netplan apply
 fi
