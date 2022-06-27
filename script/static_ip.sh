@@ -13,7 +13,7 @@ if [ $HOSTNAME == "k8s-master" ]; then
 elif [ $HOSTNAME == "k8s-node1" ]; then
     IP_LAST_BIT="57"
 elif [ $HOSTNAME == "k8s-node2" ]; then
-    IP_LAST_BIT="60"
+    IP_LAST_BIT="58"
 else
     IP_LAST_BIT="error"
 fi
