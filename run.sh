@@ -21,6 +21,63 @@ if [ $CHECK_SWAP != "0B" ]; then
     swapoff -a && sed -i '/swap/s/^/#/' /etc/fstab
 fi
 
+if [ $# -ne 0 ]; then
+# containerd
+cat <<EOF | tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+modprobe overlay
+modprobe br_netfilter
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+sysctl --system
+
+mkdir -p /etc/containerd
+containerd config default | tee /etc/containerd/config.toml
+systemctl restart containerd
+sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+systemctl restart containerd
+
+# CRI-O
+cat <<EOF | tee /etc/modules-load.d/crio.conf
+overlay
+br_netfilter
+EOF
+modprobe overlay
+modprobe br_netfilter
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+sysctl --system
+
+OS="xUbuntu_20.04"
+VERSION="1.20"
+cat <<EOF | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /
+EOF
+cat <<EOF | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /
+EOF
+
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers.gpg add -
+curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/Release.key | apt-key --keyring /etc/apt/trusted.gpg.d/libcontainers-cri-o.gpg add -
+
+apt update
+apt install -y cri-o cri-o-runc
+
+systemctl daemon-reload
+systemctl enable crio --now
+
+# sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+# conmon_cgroup = "pod"
+# cgroup_manager = "cgroupfs"
+fi
 # (kubeadm, kubelet, kubectl) install
 CHECK_KUBE=$(dpkg -l | grep kubectl | wc -l)
 if [ $CHECK_KUBE -eq 0 ]; then
@@ -38,11 +95,11 @@ fi
 HOSTNAME=$(hostname)
 CURRENT_IP=$(ip addr | grep "inet.*enp0s3" | awk '{print $2}')
 IP_RANGE=$(echo `expr "$CURRENT_IP" : '\([0-9]*\.[0-9]*.[0-9]*.\)'`)
-if [ $HOSTNAME == "master" ]; then
+if [ $HOSTNAME == "k8s-master" ]; then
     IP_LAST_BIT="56"
-elif [ $HOSTNAME == "node1" ]; then
+elif [ $HOSTNAME == "k8s-node1" ]; then
     IP_LAST_BIT="57"
-elif [ $HOSTNAME == "node2" ]; then
+elif [ $HOSTNAME == "k8s-node2" ]; then
     IP_LAST_BIT="60"
 else
     echo -e "\033[96m./run [last_ip_bit]\033[0m"
